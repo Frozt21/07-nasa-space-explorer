@@ -1,878 +1,172 @@
-// =====================================
-// NASA SPACE EXPLORER
-// FUTURE MISSION CONTROL SYSTEM
-// =====================================
+// ==========================================
+// CONFIGURATION & GLOBAL STATE
+// ==========================================
+const API_KEY = "ViY4CYjnsCHrkflfpap9GcU1p2936qimzfuTXBML"; // Replace with your actual NASA API key for higher limits!
+const APOD_API_URL = "https://api.nasa.gov/planetary/apod";
 
+// LevelUp: Array of space facts configured for core terminal display
+const SPACE_FACTS = [
+  "One day on Venus is longer than one year on Venus.",
+  "Neutron stars are so dense that a single teaspoon of their material would weigh about 6 billion tons!",
+  "Space is completely silent because there is no atmosphere for sound waves to travel through.",
+  "Footprints left by astronauts on the Moon will probably stay there for at least 100 million years.",
+  "The Sun is massive enough that approximately 1.3 million Earths could fit inside it.",
+  "There are more trees on Earth than stars in the Milky Way galaxy.",
+  "Sunset on Mars appears blue to human observers due to the fine dust particles in its atmosphere."
+];
 
-// NASA API KEY
-
-const API_KEY = "ViY4CYjnsCHrkflfpap9GcU1p2936qimzfuTXBML";
-
-
-const APOD_URL =
-"https://api.nasa.gov/planetary/apod";
-
-
-
-
-
-// =====================================
+// ==========================================
 // DOM ELEMENTS
-// =====================================
-
-
-const startDateInput =
-document.getElementById("startDate");
-
-
-const endDateInput =
-document.getElementById("endDate");
-
-
-const searchBtn =
-document.getElementById("searchBtn");
-
-
-const gallery =
-document.getElementById("gallery");
-
-
-const loading =
-document.getElementById("loading");
-
-
-
-// Modal
-
-const modal =
-document.getElementById("modal");
-
-
-const closeModal =
-document.getElementById("closeModal");
-
-
-const modalImage =
-document.getElementById("modalImage");
-
-
-const modalVideo =
-document.getElementById("modalVideo");
-
-
-const modalTitle =
-document.getElementById("modalTitle");
-
-
-const modalDate =
-document.getElementById("modalDate");
-
-
-const modalExplanation =
-document.getElementById("modalExplanation");
-
-
-const hdLink =
-document.getElementById("hdLink");
-
-
-
-
-
-// =====================================
-// SPACE FACT DATABASE
-// =====================================
-
-
-const spaceFacts = [
-
-"NASA's Voyager spacecraft have traveled beyond our solar system.",
-
-"A black hole's gravity is strong enough to bend light.",
-
-"The Sun produces enough energy every second to power Earth for thousands of years.",
-
-"Saturn's rings are mostly made of billions of pieces of ice.",
-
-"The Milky Way galaxy contains hundreds of billions of stars.",
-
-"One million Earths could fit inside the Sun.",
-
-"Jupiter has the fastest rotation of any planet in our solar system.",
-
-"Space is completely silent because sound needs a medium to travel."
-
-];
-
-
-
-
-
-function displayRandomFact(){
-
-
-const fact =
-spaceFacts[
-Math.floor(
-Math.random() *
-spaceFacts.length
-)
-];
-
-
-document.getElementById(
-"spaceFact"
-)
-.textContent =
-fact;
-
-
-}
-
-
-
-displayRandomFact();
-
-
-
-
-
-// =====================================
-// DATE SYSTEM START
-// =====================================
-
-
-setupDateInputs(
-startDateInput,
-endDateInput
-);
-
-
-
-
-
-
-
-// =====================================
-// SEARCH BUTTON
-// =====================================
-
-
-searchBtn.addEventListener(
-"click",
-fetchAPOD
-);
-
-
-
-
-
-
-
-// =====================================
-// NASA API REQUEST
-// =====================================
-
-
-async function fetchAPOD(){
-
-
-
-const start =
-startDateInput.value;
-
-
-
-const end =
-endDateInput.value;
-
-
-
-if(!start || !end){
-
-
-alert(
-"MISSION ERROR: Select valid dates."
-);
-
-
-return;
-
-
-}
-
-
-
-
-gallery.innerHTML = "";
-
-
-
-loading.style.display =
-"block";
-
-
-
-try{
-
-
-const response =
-await fetch(
-
-`${APOD_URL}?api_key=${API_KEY}&start_date=${start}&end_date=${end}`
-
-);
-
-
-
-
-if(!response.ok){
-
-
-throw new Error(
-"NASA database connection failed."
-);
-
-
-}
-
-
-
-
-const data =
-await response.json();
-
-
-
-loading.style.display =
-"none";
-
-
-
-
-
-// NASA sends oldest first
-
-data.reverse();
-
-
-
-
-createGallery(data);
-
-
-
-
-}
-
-
-
-catch(error){
-
-
-loading.style.display =
-"none";
-
-
-
-gallery.innerHTML = `
-
-
-<div class="card">
-
-<div class="cardContent">
-
-<h3>
-
-SYSTEM FAILURE
-
-</h3>
-
-
-<p>
-
-${error.message}
-
-</p>
-
-
-</div>
-
-
-</div>
-
-
-`;
-
-
-
-console.error(error);
-
-
-
-}
-
-
-
-}
-
-
-
-
-
-
-
-
-
-// =====================================
-// CREATE IMAGE DATABASE
-// =====================================
-
-
-function createGallery(items){
-
-
-
-gallery.innerHTML = "";
-
-
-
-
-
-items.forEach(item => {
-
-
-
-const card =
-document.createElement("div");
-
-
-
-card.className =
-"card";
-
-
-
-
-
-let media = "";
-
-
-
-
-
-if(item.media_type === "image"){
-
-
-media = `
-
-<img
-
-src="${item.url}"
-
-alt="${item.title}"
-
->
-
-`;
-
-
-}
-
-
-
-
-else if(item.media_type === "video"){
-
-
-media = `
-
-
-<div class="videoPlaceholder">
-
-▶
-
-</div>
-
-
-`;
-
-
-}
-
-
-
-
-
-
-card.innerHTML = `
-
-
-${media}
-
-
-<div class="cardContent">
-
-
-<h3>
-
-${item.title}
-
-</h3>
-
-
-
-<p>
-
-DATE:
-${item.date}
-
-</p>
-
-
-
-<p>
-
-SOURCE:
-${item.copyright || "NASA"}
-
-</p>
-
-
-</div>
-
-
-`;
-
-
-
-
-
-
-card.addEventListener(
-"click",
-function(){
-
-openModal(item);
-
-}
-
-);
-
-
-
-
-
-gallery.appendChild(card);
-
-
-
+// ==========================================
+const startDateInput = document.getElementById("start-date");
+const endDateInput = document.getElementById("end-date");
+const getImagesBtn = document.getElementById("get-images-btn");
+const galleryContainer = document.getElementById("gallery");
+const loadingMessage = document.getElementById("loading-message");
+const factText = document.getElementById("fact-text");
+
+// Modal Elements
+const modal = document.getElementById("space-modal");
+const modalMediaContainer = document.getElementById("modal-media-container");
+const modalTitle = document.getElementById("modal-title");
+const modalDate = document.getElementById("modal-date");
+const modalExplanation = document.getElementById("modal-explanation");
+const closeModalBtn = document.getElementById("close-modal-btn");
+
+// ==========================================
+// INITIALIZATION
+// ==========================================
+document.addEventListener("DOMContentLoaded", () => {
+  displayRandomFact();
+  setupEventListeners();
 });
 
-
-
+function displayRandomFact() {
+  if (factText) {
+    const randomIndex = Math.floor(Math.random() * SPACE_FACTS.length);
+    factText.textContent = `CORE FIELD OBSERVATION // L-STRATA: ${SPACE_FACTS[randomIndex]}`;
+  }
 }
 
-
-
-
-
-
-
-
-
-// =====================================
-// MODAL SYSTEM
-// =====================================
-
-
-function openModal(item){
-
-
-
-modal.style.display =
-"flex";
-
-
-
-modalTitle.textContent =
-item.title;
-
-
-
-modalDate.textContent =
-item.date;
-
-
-
-modalExplanation.textContent =
-item.explanation;
-
-
-
-
-
-
-modalImage.style.display =
-"none";
-
-
-modalVideo.style.display =
-"none";
-
-
-hdLink.style.display =
-"none";
-
-
-
-
-
-
-
-if(item.media_type === "image"){
-
-
-
-modalImage.src =
-item.hdurl ||
-item.url;
-
-
-
-modalImage.style.display =
-"block";
-
-
-
-hdLink.href =
-item.hdurl ||
-item.url;
-
-
-
-hdLink.style.display =
-"inline-block";
-
-
-
+function setupEventListeners() {
+  getImagesBtn.addEventListener("click", fetchSpaceImages);
+  closeModalBtn.addEventListener("click", closeModal);
+  
+  window.addEventListener("click", (e) => {
+    if (e.target === modal) {
+      closeModal();
+    }
+  });
 }
 
-
-
-
-
-
-else if(item.media_type === "video"){
-
-
-
-modalVideo.src =
-convertYoutube(item.url);
-
-
-
-modalVideo.style.display =
-"block";
-
-
-
-}
-
-
-
-}
-
-
-
-
-
-
-
-
-
-// =====================================
-// YOUTUBE SUPPORT
-// =====================================
-
-
-function convertYoutube(url){
-
-
-
-if(
-url.includes(
-"youtube.com/embed"
-)
-
-){
-
-
-return url;
-
-
-}
-
-
-
-
-
-let videoID =
-url.split("v=")[1];
-
-
-
-
-
-if(videoID){
-
-
-videoID =
-videoID.split("&")[0];
-
-
-}
-
-
-
-
-
-return `https://www.youtube.com/embed/${videoID}`;
-
-
-
-}
-
-
-
-
-
-
-
-
-
-// =====================================
-// CLOSE MODAL
-// =====================================
-
-
-closeModal.addEventListener(
-"click",
-closeModalWindow
-);
-
-
-
-
-
-modal.addEventListener(
-"click",
-function(event){
-
-
-
-if(event.target === modal){
-
-
-closeModalWindow();
-
-
-}
-
-
-
-}
-
-);
-
-
-
-
-
-
-
-function closeModalWindow(){
-
-
-modal.style.display =
-"none";
-
-
-modalVideo.src =
-"";
-
-
-}
-
-
-
-
-
-
-
-
-document.addEventListener(
-"keydown",
-function(event){
-
-
-
-if(event.key === "Escape"){
-
-
-closeModalWindow();
-
-
-}
-
-
-
-}
-
-);
-
-
-
-
-
-
-
-
-
-// =====================================
-// AUTO START MISSION
-// =====================================
-
-
-window.addEventListener(
-"load",
-function(){
-
-
-fetchAPOD();
-
-
-});
-
-
-// =====================================
-// STARFIELD PARTICLE SYSTEM
-// =====================================
-
-const canvas =
-document.getElementById("starfield");
-
-const ctx =
-canvas.getContext("2d");
-
-let stars = [];
-
-const STAR_COUNT = 250;
-
-function resizeCanvas(){
-
-    canvas.width =
-    window.innerWidth;
-
-    canvas.height =
-    window.innerHeight;
-
-}
-
-window.addEventListener(
-"resize",
-resizeCanvas
-);
-
-resizeCanvas();
-
-function createStars(){
-
-    stars = [];
-
-    for(let i=0;i<STAR_COUNT;i++){
-
-        stars.push({
-
-            x:Math.random()*canvas.width,
-
-            y:Math.random()*canvas.height,
-
-            radius:Math.random()*2 + 0.5,
-
-            speed:Math.random()*0.6 + 0.2,
-
-            alpha:Math.random(),
-
-            twinkle:Math.random()*0.02
-
-        });
-
+// ==========================================
+// API FETCH & DATA HANDLING
+// ==========================================
+async function fetchSpaceImages() {
+  const startDate = startDateInput.value;
+  const endDate = endDateInput.value;
+
+  if (!startDate || !endDate) {
+    alert("TERMINAL ERROR // TENSOR FIELD PARAMETERS UNASSIGNED");
+    return;
+  }
+
+  loadingMessage.style.display = "block";
+  galleryContainer.innerHTML = "";
+
+  try {
+    const response = await fetch(`${APOD_API_URL}?api_key=${API_KEY}&start_date=${startDate}&end_date=${endDate}`);
+    
+    if (!response.ok) {
+      throw new Error(`HTTP status failure: ${response.status}`);
     }
 
+    const data = await response.json();
+    displayGallery(data);
+  } catch (error) {
+    console.error("Error fetching APOD data:", error);
+    galleryContainer.innerHTML = `<p class="error-msg">MATRIX LINK REJECTED // STREAM TIMEOUT: Verify local dimensional date syntax coordinates.</p>`;
+  } finally {
+    loadingMessage.style.display = "none";
+  }
 }
 
-createStars();
+// ==========================================
+// GALLERY RENDERING
+// ==========================================
+function displayGallery(items) {
+  const dataList = Array.isArray(items) ? items : [items];
 
-function animateStars(){
+  if (dataList.length === 0) {
+    galleryContainer.innerHTML = "<p class='error-msg'>NULL MATRIX FEED // NO STELLAR ENTRIES FOUND IN SPECIFIED FIELD RANGE.</p>";
+    return;
+  }
 
-    ctx.clearRect(
-        0,
-        0,
-        canvas.width,
-        canvas.height
-    );
+  dataList.forEach(item => {
+    const galleryCard = document.createElement("div");
+    galleryCard.classList.add("gallery-card");
 
-    for(const star of stars){
-
-        star.y += star.speed;
-
-        star.alpha += star.twinkle;
-
-        if(star.alpha > 1){
-
-            star.twinkle *= -1;
-
-        }
-
-        if(star.alpha < 0.2){
-
-            star.twinkle *= -1;
-
-        }
-
-        if(star.y > canvas.height){
-
-            star.y = 0;
-
-            star.x =
-            Math.random()*canvas.width;
-
-        }
-
-        ctx.beginPath();
-
-        ctx.arc(
-            star.x,
-            star.y,
-            star.radius,
-            0,
-            Math.PI*2
-        );
-
-        ctx.fillStyle =
-        "rgba(255,255,255," +
-        star.alpha +
-        ")";
-
-        ctx.fill();
-
+    let mediaHTML = "";
+    if (item.media_type === "image") {
+      mediaHTML = `<img src="${item.url}" alt="${item.title}" class="gallery-img">`;
+    } else if (item.media_type === "video") {
+      mediaHTML = `
+        <div class="video-thumbnail-placeholder">
+          <span class="play-icon">CAPTURE</span>
+          <p class="video-label">COSMIC RADIAL ENVELOPE</p>
+        </div>
+      `;
+    } else {
+      return;
     }
 
-    requestAnimationFrame(
-        animateStars
-    );
+    galleryCard.innerHTML = `
+      <div class="media-wrapper">
+        ${mediaHTML}
+      </div>
+      <div class="card-info">
+        <h3>${item.title}</h3>
+        <span class="card-date">FIELD DATA // CHRONO: ${item.date}</span>
+      </div>
+    `;
 
+    galleryCard.addEventListener("click", () => openModal(item));
+    galleryContainer.appendChild(galleryCard);
+  });
 }
 
-animateStars();
+// ==========================================
+// MODAL LOGIC
+// ==========================================
+function openModal(item) {
+  modalTitle.textContent = item.title;
+  modalDate.textContent = `PROJECTED INDEX VECTOR // ${item.date}`;
+  modalExplanation.textContent = item.explanation;
+
+  modalMediaContainer.innerHTML = "";
+
+  if (item.media_type === "image") {
+    const img = document.createElement("img");
+    img.src = item.hdurl || item.url;
+    img.alt = item.title;
+    img.classList.add("modal-media-content");
+    modalMediaContainer.appendChild(img);
+  } else if (item.media_type === "video") {
+    const iframe = document.createElement("iframe");
+    iframe.src = item.url;
+    iframe.frameBorder = "0";
+    iframe.allow = "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture";
+    iframe.allowFullscreen = true;
+    iframe.classList.add("modal-media-content", "video-iframe");
+    modalMediaContainer.appendChild(iframe);
+  }
+
+  modal.style.display = "flex";
+  document.body.style.overflow = "hidden";
+}
+
+function closeModal() {
+  modal.style.display = "none";
+  document.body.style.overflow = "auto";
+  modalMediaContainer.innerHTML = "";
+}

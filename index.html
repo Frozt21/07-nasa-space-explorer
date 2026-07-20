@@ -1,306 +1,60 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-
-<meta charset="UTF-8">
-
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>NASA Space Explorer | Mission Control</title>
-
-<link rel="stylesheet" href="style.css">
-
-<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
-
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NASA Space Explorer</title>
+  <link rel="stylesheet" href="styles.css">
 </head>
-
 <body>
 
-<!-- ===========================
-     3D EARTH BACKGROUND
-=========================== -->
-
-<div id="earthScene"></div>
-
-<!-- ===========================
-     STARFIELD
-=========================== -->
-
-<canvas id="starfield"></canvas>
-
-<!-- ===========================
-     HUD GRID
-=========================== -->
-
-<div class="grid-overlay"></div>
-
-<!-- ===========================
-     HEADER
-=========================== -->
-
-<header class="mission-header">
-
-<div class="brand">
-
-<img
-
-src="https://upload.wikimedia.org/wikipedia/commons/e/e5/NASA_logo.svg"
-
-alt="NASA Logo"
-
-class="logo">
-
-<div>
-
-<p class="agency">
-
-NATIONAL AERONAUTICS AND SPACE ADMINISTRATION
-
-</p>
-
-<h1>
-
-NASA SPACE EXPLORER
-
-</h1>
-
-<p class="subtitle">
-
-MISSION CONTROL • APOD DATABASE
-
-</p>
-
-</div>
-
-</div>
-
-<div class="status">
-
-SYSTEM STATUS
-
-<span></span>
-
-</div>
-
-</header>
-
-<!-- ===========================
-     CONTROL PANEL
-=========================== -->
-
-<section class="control-panel">
-
-<div class="panel-title">
-
-MISSION PARAMETERS
-
-</div>
-
-<div class="controls">
-
-<div class="date-group">
-
-<label for="startDate">
-
-START DATE
-
-</label>
-
-<input
-type="date"
-id="startDate">
-
-</div>
-
-<div class="date-group">
-
-<label for="endDate">
-
-END DATE
-
-</label>
-
-<input
-type="date"
-id="endDate">
-
-</div>
-
-<button id="searchBtn">
-
-LAUNCH SEARCH
-
-</button>
-
-</div>
-
-</section>
-
-<!-- ===========================
-     SPACE FACT
-=========================== -->
-
-<section
-id="factSection"
-class="glass-panel">
-
-<h2>
-
-MISSION FACT
-
-</h2>
-
-<p id="spaceFact">
-
-Loading NASA data...
-
-</p>
-
-</section>
-
-<!-- ===========================
-     LOADING
-=========================== -->
-
-<div id="loading">
-
-<div class="scanner"></div>
-
-<p>
-
-CONNECTING TO NASA SERVERS...
-
-</p>
-
-</div>
-
-<!-- ===========================
-     IMAGE GALLERY
-=========================== -->
-
-<section
-id="gallery"
-class="gallery">
-
-</section>
-<!-- ===========================
-     IMAGE / VIDEO MODAL
-=========================== -->
-
-<div
-id="modal"
-class="modal">
-
-<div class="modal-content">
-
-<span
-id="closeModal">
-
-&times;
-
-</span>
-
-<img
-
-id="modalImage"
-
-src=""
-
-alt="NASA Image">
-
-<iframe
-
-id="modalVideo"
-
-frameborder="0"
-
-allowfullscreen>
-
-</iframe>
-
-<h2 id="modalTitle">
-
-</h2>
-
-<h4 id="modalDate">
-
-</h4>
-
-<p id="modalExplanation">
-
-</p>
-
-<a
-
-id="hdLink"
-
-class="hdButton"
-
-target="_blank">
-
-OPEN HD IMAGE
-
-</a>
-
-</div>
-
-</div>
-
-<!-- ===========================
-     FOOTER
-=========================== -->
-
-<footer>
-
-<div class="footer-content">
-
-<img
-
-src="https://upload.wikimedia.org/wikipedia/commons/e/e5/NASA_logo.svg"
-
-class="footer-logo"
-
-alt="NASA Logo">
-
-<div>
-
-<h3>
-
-NASA SPACE EXPLORER
-
-</h3>
-
-<p>
-
-Astronomy Picture of the Day Database
-
-</p>
-
-<p>
-
-Powered by NASA Open APIs
-
-</p>
-
-</div>
-
-</div>
-
-</footer>
-
-<!-- ===========================
-     SCRIPTS
-=========================== -->
-
-<script src="https://cdn.jsdelivr.net/npm/three@0.161.0/build/three.min.js"></script>
-
-<script src="earth.js"></script>
-
-<script src="dateRange.js"></script>
-
-<script src="script.js"></script>
-
+  <header class="nasa-header">
+    <img src="nasa-logo.png" alt="NASA Logo" class="nasa-logo">
+    <h1>Space Explorer App</h1>
+  </header>
+
+  <div class="fact-banner">
+    <p id="fact-text">Loading a fascinating space fact...</p>
+  </div>
+
+  <main class="app-container">
+    <section class="controls">
+      <h2>Astronomy Picture of the Day Gallery</h2>
+      <p>Select a date range to begin your cosmic journey (June 16, 1995 to today):</p>
+      
+      <div class="date-inputs">
+        <div class="input-group">
+          <label for="start-date">Start Date</label>
+          <input type="date" id="start-date" name="start-date">
+        </div>
+        <div class="input-group">
+          <label for="end-date">End Date</label>
+          <input type="date" id="end-date" name="end-date">
+        </div>
+        <button id="get-images-btn">Get Space Images</button>
+      </div>
+    </section>
+
+    <div id="loading-message" class="loading-spinner" style="display: none;">
+      <p>Loading space photos...</p>
+    </div>
+
+    <div id="gallery" class="gallery-grid"></div>
+  </main>
+
+  <div id="space-modal" class="modal">
+    <div class="modal-content">
+      <span id="close-modal-btn" class="close-btn">&times;</span>
+      <div id="modal-media-container"></div>
+      <div class="modal-info">
+        <h2 id="modal-title"></h2>
+        <p id="modal-date" class="modal-date-text"></p>
+        <p id="modal-explanation"></p>
+      </div>
+    </div>
+  </div>
+
+  <script src="dateRange.js"></script>
+  <script src="script.js"></script>
 </body>
-
 </html>
